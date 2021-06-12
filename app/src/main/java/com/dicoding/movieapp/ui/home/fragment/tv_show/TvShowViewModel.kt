@@ -1,9 +1,8 @@
 package com.dicoding.movieapp.ui.home.fragment.tv_show
 
 import androidx.lifecycle.ViewModel
-import com.dicoding.movieapp.model.DataModel
-import com.dicoding.movieapp.utils.DataDummy
+import com.dicoding.movieapp.repository.MovieCatalogueRepository
 
-class TvShowViewModel : ViewModel() {
-    fun getTvShows() : List<DataModel> = DataDummy.createDataTvShowDummy()
+class TvShowViewModel(private val movieCatalogueRepository: MovieCatalogueRepository): ViewModel() {
+    fun getTvShows() = movieCatalogueRepository.getTvShows()
 }

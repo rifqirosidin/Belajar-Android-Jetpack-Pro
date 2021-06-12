@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dicoding.movieapp.databinding.FragmentTvShowBinding
+import com.dicoding.movieapp.viewmodel.ViewModelFactory
 
 /**
  * A simple [Fragment] subclass.
@@ -26,11 +29,16 @@ class TvShowFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (activity != null){
-            val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[TvShowViewModel::class.java]
-            val tvShows = viewModel.getTvShows()
+            showLoading(true)
 
+            val factory = ViewModelFactory.getInstance()
+            val viewModel = ViewModelProvider(this, factory)[TvShowViewModel::class.java]
             val tvShowAdapter = TvShowAdapter()
-            tvShowAdapter.setTvShows(tvShows)
+            viewModel.getTvShows().observe(viewLifecycleOwner, Observer {tvShows ->
+                showLoading(false)
+                tvShowAdapter.setTvShows(tvShows)
+                tvShowAdapter.notifyDataSetChanged()
+            })
 
             with(fragmentTvShowBinding.rvTvShow){
                 layoutManager = GridLayoutManager(context, 2)
@@ -38,5 +46,9 @@ class TvShowFragment : Fragment() {
                 adapter = tvShowAdapter
             }
         }
+    }
+
+    private fun showLoading(status: Boolean){
+        fragmentTvShowBinding.tvShowProgressBar.isVisible = status;
     }
 }

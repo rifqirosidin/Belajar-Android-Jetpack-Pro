@@ -11,10 +11,12 @@ import com.dicoding.movieapp.databinding.ItemMovieBinding
 import com.dicoding.movieapp.model.DataModel
 import com.dicoding.movieapp.ui.home.detail.DetailActivity
 import com.dicoding.movieapp.utils.DataType
+import com.dicoding.movieapp.utils.NetworkInfo.IMAGE_URL
 
 class MovieAdapter : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
     private var movieList = ArrayList<DataModel>()
-    fun setMovie(model: List<DataModel>?){
+
+    fun setMovie(model: List<DataModel>){
         if (model == null) return
         this.movieList.clear()
         this.movieList.addAll(model)
@@ -45,7 +47,7 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
                     itemView.context.startActivity(intent)
                 }
                 Glide.with(itemView.context)
-                        .load(model.poster)
+                        .load(IMAGE_URL + model.poster)
                         .apply(RequestOptions.placeholderOf(R.drawable.ic_loading))
                         .error(R.drawable.ic_error)
                         .into(ivPoster)

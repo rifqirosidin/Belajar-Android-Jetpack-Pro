@@ -11,6 +11,7 @@ import com.dicoding.movieapp.databinding.ItemMovieBinding
 import com.dicoding.movieapp.model.DataModel
 import com.dicoding.movieapp.ui.home.detail.DetailActivity
 import com.dicoding.movieapp.utils.DataType
+import com.dicoding.movieapp.utils.NetworkInfo.IMAGE_URL
 
 class TvShowAdapter : RecyclerView.Adapter<TvShowAdapter.TvShowViewHolder>(){
 
@@ -47,7 +48,7 @@ class TvShowAdapter : RecyclerView.Adapter<TvShowAdapter.TvShowViewHolder>(){
                 }
 
                 Glide.with(itemView.context)
-                        .load(tvShow.poster)
+                        .load(IMAGE_URL + tvShow.poster)
                         .apply(RequestOptions.placeholderOf(R.drawable.ic_loading))
                         .error(R.drawable.ic_error)
                         .into(ivPoster)

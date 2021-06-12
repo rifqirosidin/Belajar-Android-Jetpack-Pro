@@ -2,12 +2,15 @@ package com.dicoding.movieapp.ui.home.detail
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dicoding.movieapp.R
 import com.dicoding.movieapp.model.DataModel
 import com.dicoding.movieapp.utils.DataType.*
+import com.dicoding.movieapp.utils.NetworkInfo.IMAGE_URL
+import com.dicoding.movieapp.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
@@ -17,35 +20,32 @@ class DetailActivity : AppCompatActivity() {
         const val EXTRA_TYPE = "extra_type"
     }
 
-    private lateinit var result: DataModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[DetailViewModel::class.java]
+        val factory = ViewModelFactory.getInstance()
+        val viewModel = ViewModelProvider(this, factory)[DetailViewModel::class.java]
 
-        val id = intent.getStringExtra(EXTRA_DATA)
+        val id = intent.getIntExtra(EXTRA_DATA, 0)
         val type = intent.getStringExtra(EXTRA_TYPE)
         if (type.equals(MOVIE.name)){
-            supportActionBar?.title = getString(R.string.movie_detail)
-            id?.let {
-                viewModel.setMovieId(it)
-            }
-            result = viewModel.getMovieById()
+            viewModel.getMovieDetail(id).observe(this, Observer {
+                displayView(it)
+            })
         } else if (type.equals(TV_SHOW.name)){
-            supportActionBar?.title = getString(R.string.tv_show_detail)
-            id?.let {
-                viewModel.setTvShowId(it)
-            }
-            result = viewModel.getTvShowById()
+            viewModel.getTvShowDetail(id).observe(this, Observer {
+                displayView(it)
+            })
         }
+    }
 
-        tv_title_detail_movie.text = result.name
-        tv_desc_detail_movie.text = result.desc
+    private fun displayView(dataModel: DataModel){
+        tv_title_detail_movie.text = dataModel.name
+        tv_desc_detail_movie.text = dataModel.description
         Glide.with(this)
-                .load(result.img_preview)
-                .apply(RequestOptions.placeholderOf(R.drawable.ic_loading))
-                .error(R.drawable.ic_error)
-                .into(iv_detail_movie)
-
+            .load(IMAGE_URL + dataModel.imgPreview)
+            .apply(RequestOptions.placeholderOf(R.drawable.ic_loading))
+            .error(R.drawable.ic_error)
+            .into(iv_detail_movie)
     }
 }
