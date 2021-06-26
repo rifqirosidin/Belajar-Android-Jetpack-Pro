@@ -1,4 +1,4 @@
-package com.riyaldi.moviecatalogue.utils
+package com.dicoding.movieapp.utils
 
 import android.os.Handler
 import android.os.Looper

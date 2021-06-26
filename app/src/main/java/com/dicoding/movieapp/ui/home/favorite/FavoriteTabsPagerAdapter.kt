@@ -9,7 +9,8 @@ import com.dicoding.movieapp.R
 import com.dicoding.movieapp.ui.home.favorite.movie.FavoriteMovieFragment
 import com.dicoding.movieapp.ui.home.favorite.tvshow.FavoriteTvShowFragment
 
-class FavoriteSectionPagerAdapter (private val mContext: Context, fm: FragmentManager): FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)  {
+class FavoriteTabsPagerAdapter (private val mContext: Context, fm: FragmentManager):
+    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)  {
 
     companion object {
         @StringRes
@@ -23,10 +24,9 @@ class FavoriteSectionPagerAdapter (private val mContext: Context, fm: FragmentMa
             else -> Fragment()
         }
 
-    override fun getPageTitle(position: Int): CharSequence? =
-        mContext.resources.getString(FavoriteSectionPagerAdapter.TAB_MENU[position])
+    override fun getPageTitle(position: Int): CharSequence? = mContext.resources.getString(TAB_MENU[position])
 
     override fun getCount(): Int {
-        return 2;
+        return 2
     }
 }

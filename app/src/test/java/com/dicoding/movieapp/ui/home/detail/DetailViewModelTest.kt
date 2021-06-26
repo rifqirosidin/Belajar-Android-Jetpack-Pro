@@ -3,11 +3,14 @@ package com.dicoding.movieapp.ui.home.detail
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.dicoding.movieapp.model.DataModel
+import com.dicoding.movieapp.data.source.local.entity.MovieEntity
+import com.dicoding.movieapp.data.source.local.entity.TvShowEntity
 import com.dicoding.movieapp.repository.MovieCatalogueRepository
 import com.dicoding.movieapp.utils.DataDummy
+import com.dicoding.movieapp.utils.DataType
+import com.dicoding.movieapp.utils.Resource
 import com.nhaarman.mockitokotlin2.verify
-import junit.framework.Assert.assertEquals
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,10 +22,10 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class DetailViewModelTest {
     private lateinit var viewModel: DetailViewModel
-    private val dummyDataMovie = DataDummy.createDataMovieDummy()[0]
-    private val movieId = dummyDataMovie.id;
+    private val dummyDataMovie = DataDummy.getDummyDetailMovie()
+    private val movieId = dummyDataMovie.id
 
-    private val dummyDataTvShow = DataDummy.createDataTvShowDummy()[0]
+    private val dummyDataTvShow = DataDummy.getDummyDetailTvShow()
     private val tvShowId = dummyDataTvShow.id
 
     @get:Rule
@@ -32,7 +35,10 @@ class DetailViewModelTest {
     private lateinit var movieCatalogueRepository: MovieCatalogueRepository
 
     @Mock
-    private lateinit var observer: Observer<DataModel>
+    private lateinit var movieObserver: Observer<Resource<MovieEntity>>
+
+    @Mock
+    private lateinit var tvShowObserver: Observer<Resource<TvShowEntity>>
 
     @Before
     fun setUp() {
@@ -41,41 +47,68 @@ class DetailViewModelTest {
 
     @Test
     fun testGetMovieById() {
-    val movieDummy = MutableLiveData<DataModel>()
-    movieDummy.value = dummyDataMovie
+        val dummyDetailMovie = Resource.success(DataDummy.getDummyDetailMovie())
+        val movie = MutableLiveData<Resource<MovieEntity>>()
+        movie.value = dummyDetailMovie
 
-    Mockito.`when`(movieCatalogueRepository.getMovieDetail(movieId)).thenReturn(movieDummy)
+        Mockito.`when`(movieId?.let { movieCatalogueRepository.getDetailMovie(it) }).thenReturn(movie)
 
-    val movieData = viewModel.getMovieDetail(movieId).value as DataModel
+        if (movieId != null) {
+            viewModel.setCatalog(movieId, DataType.MOVIE.name)
+        }
+        viewModel.getDetailMovie().observeForever(movieObserver)
+        verify(movieObserver).onChanged(dummyDetailMovie)
+    }
 
-    junit.framework.Assert.assertNotNull(movieData)
-    assertEquals(dummyDataMovie.id, movieData.id)
-    assertEquals(dummyDataMovie.name, movieData.name)
-    assertEquals(dummyDataMovie.description, movieData.description)
-    assertEquals(dummyDataMovie.poster, movieData.poster)
-    assertEquals(dummyDataMovie.imgPreview, movieData.imgPreview)
+    @Test
+    fun setFavoriteMovie() {
+        val dummyDetailMovie = Resource.success(DataDummy.getDummyDetailMovie())
+        val movie = MutableLiveData<Resource<MovieEntity>>()
+        movie.value = dummyDetailMovie
 
-    viewModel.getMovieDetail(movieId).observeForever(observer)
-    verify(observer).onChanged(dummyDataMovie)
+        Mockito.`when`(movieId?.let { movieCatalogueRepository.getDetailMovie(it) }).thenReturn(movie)
+
+        if (movieId != null) {
+            viewModel.setCatalog(movieId, DataType.MOVIE.name)
+        }
+        viewModel.setFavoriteMovie()
+        verify(movieCatalogueRepository).setFavoriteMovie(movie.value!!.data as MovieEntity, true)
+        verifyNoMoreInteractions(movieObserver)
+    }
+
+    @Before
+    fun setupTvShow() {
+        viewModel = DetailViewModel(movieCatalogueRepository)
     }
 
     @Test
     fun testGetTvShowById() {
-        val tvShowDummy = MutableLiveData<DataModel>()
-        tvShowDummy.value = dummyDataTvShow
+        val dummyDetailTvShow = Resource.success(DataDummy.getDummyDetailTvShow())
+        val tvShow = MutableLiveData<Resource<TvShowEntity>>()
+        tvShow.value = dummyDetailTvShow
 
-        Mockito.`when`(movieCatalogueRepository.getTvShowDetail(tvShowId)).thenReturn(tvShowDummy)
+        Mockito.`when`(tvShowId?.let { movieCatalogueRepository.getDetailTvShow(it) }).thenReturn(tvShow)
 
-        val tvShowData = viewModel.getTvShowDetail(tvShowId).value as DataModel
+        if (tvShowId != null) {
+            viewModel.setCatalog(tvShowId, DataType.TV_SHOW.name)
+        }
+        viewModel.getDetailTvShow().observeForever(tvShowObserver)
+        verify(tvShowObserver).onChanged(dummyDetailTvShow)
+    }
 
-        junit.framework.Assert.assertNotNull(tvShowData)
-        assertEquals(dummyDataTvShow.id, tvShowData.id)
-        assertEquals(dummyDataTvShow.name, tvShowData.name)
-        assertEquals(dummyDataTvShow.description, tvShowData.description)
-        assertEquals(dummyDataTvShow.poster, tvShowData.poster)
-        assertEquals(dummyDataTvShow.imgPreview, tvShowData.imgPreview)
+    @Test
+    fun setFavoriteTvShow() {
+        val dummyDetailTvShow = Resource.success(DataDummy.getDummyDetailTvShow())
+        val tvShow = MutableLiveData<Resource<TvShowEntity>>()
+        tvShow.value = dummyDetailTvShow
 
-        viewModel.getTvShowDetail(tvShowId).observeForever(observer)
-        verify(observer).onChanged(dummyDataTvShow)
+        Mockito.`when`(tvShowId?.let { movieCatalogueRepository.getDetailTvShow(it) }).thenReturn(tvShow)
+
+        if (tvShowId != null) {
+            viewModel.setCatalog(tvShowId, DataType.TV_SHOW.name)
+        }
+        viewModel.setFavoriteTvShow()
+        verify(movieCatalogueRepository).setFavoriteTvShow(tvShow.value!!.data as TvShowEntity, true)
+        verifyNoMoreInteractions(tvShowObserver)
     }
 }

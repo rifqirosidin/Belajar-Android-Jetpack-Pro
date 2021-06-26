@@ -1,4 +1,4 @@
-package com.dicoding.movieapp.ui.home.favorite
+package com.dicoding.movieapp.ui.home.favorite.movie
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -15,7 +15,9 @@ import com.dicoding.movieapp.ui.home.detail.DetailActivity
 import com.dicoding.movieapp.utils.DataType
 import com.dicoding.movieapp.utils.NetworkInfo
 
-class FavoriteMovieAdapter : PagedListAdapter<MovieEntity, FavoriteMovieAdapter.MovieViewHolder>(DIFF_CALLBACK) {
+class FavoriteMovieAdapter : PagedListAdapter<MovieEntity, FavoriteMovieAdapter.MovieViewHolder>(
+    DIFF_CALLBACK
+) {
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MovieEntity>(){

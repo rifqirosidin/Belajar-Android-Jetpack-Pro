@@ -1,42 +1,41 @@
-package com.dicoding.movieapp.data.source.room
+package com.dicoding.movieapp.data.source.local.room
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
-import androidx.sqlite.db.SimpleSQLiteQuery
-import com.dicoding.movieapp.data.source.local.MovieEntity
-import com.dicoding.movieapp.data.source.local.TvShowEntity
+import com.dicoding.movieapp.data.source.local.entity.MovieEntity
+import com.dicoding.movieapp.data.source.local.entity.TvShowEntity
 
 @Dao
 interface CatalogDao {
 
-    @RawQuery(observedEntities = [MovieEntity::class])
-    fun getMovies(query: SimpleSQLiteQuery): DataSource.Factory<Int, MovieEntity>
+    @Query("SELECT * FROM movie_entities")
+    fun getMovies() : DataSource.Factory<Int, MovieEntity>
 
-    @Query("SELECT * FROM movie_entities WHERE id = :id")
-    fun getMovieById(id: Int): LiveData<MovieEntity>
+    @Query("SELECT * FROM tv_show_entities")
+    fun getTvShows() : DataSource.Factory<Int, TvShowEntity>
 
-    @Query("SELECT * FROM movie_entities WHERE isFav = 1")
-    fun getFavMovies(): DataSource.Factory<Int, MovieEntity>
+    @Query("SELECT * FROM movie_entities WHERE isFavorite = 1")
+    fun getFavoriteMovies() : DataSource.Factory<Int, MovieEntity>
 
-    @RawQuery(observedEntities = [TvShowEntity::class])
-    fun getTvShows(query: SimpleSQLiteQuery): DataSource.Factory<Int, TvShowEntity>
+    @Query("SELECT * FROM tv_show_entities WHERE isFavorite = 1")
+    fun getFavoriteTvShows() : DataSource.Factory<Int, TvShowEntity>
 
-    @Query("SELECT * FROM tv_show_entities WHERE id = :id")
-    fun getTvShowById(id: Int): LiveData<TvShowEntity>
+    @Query("SELECT * FROM movie_entities WHERE id = :movieId")
+    fun getMovieById(movieId: Int) : LiveData<MovieEntity>
 
-    @Query("SELECT * FROM tv_show_entities WHERE isFav = 1")
-    fun getFavTvShows(): DataSource.Factory<Int, TvShowEntity>
+    @Query("SELECT * FROM tv_show_entities WHERE id = :tvShowId")
+    fun getTvShowById(tvShowId: Int) : LiveData<TvShowEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE, entity = MovieEntity::class)
     fun insertMovies(movies: List<MovieEntity>)
 
-    @Update
-    fun updateMovie(movie: MovieEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE, entity = TvShowEntity::class)
     fun insertTvShows(tvShows: List<TvShowEntity>)
 
-    @Update
-    fun updateTvShow(tvShow: TvShowEntity)
+    @Update(entity = MovieEntity::class)
+    fun updateMovie(movie : MovieEntity)
+
+    @Update(entity = TvShowEntity::class)
+    fun updateTvShow(tvShows: TvShowEntity)
 }

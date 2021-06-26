@@ -3,12 +3,12 @@ package com.dicoding.movieapp.ui.home.fragment.movie
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.dicoding.movieapp.model.DataModel
+import androidx.paging.PagedList
+import com.dicoding.movieapp.data.source.local.entity.MovieEntity
 import com.dicoding.movieapp.repository.MovieCatalogueRepository
-import com.dicoding.movieapp.utils.DataDummy
+import com.dicoding.movieapp.utils.Resource
 import com.nhaarman.mockitokotlin2.verify
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,8 +19,8 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class MovieViewModelTest {
-    private val dummyMovie = DataDummy.createDataMovieDummy()
-     private lateinit var viewModel: MovieViewModel
+
+    private lateinit var viewModel: MovieViewModel
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -29,7 +29,10 @@ class MovieViewModelTest {
     private lateinit var movieCatalogueRepository: MovieCatalogueRepository
 
     @Mock
-    private lateinit var observer: Observer<List<DataModel>>
+    private lateinit var observer: Observer<Resource<PagedList<MovieEntity>>>
+
+    @Mock
+    private lateinit var pagedList: PagedList<MovieEntity>
 
     @Before
     fun setUp() {
@@ -38,19 +41,19 @@ class MovieViewModelTest {
 
     @Test
     fun getMovies(){
-        val movie = MutableLiveData<List<DataModel>>()
-        movie.value = dummyMovie
+        val dummyMovies = Resource.success(pagedList)
+        Mockito.`when`(dummyMovies.data?.size).thenReturn(3)
+        val movies = MutableLiveData<Resource<PagedList<MovieEntity>>>()
+        movies.value = dummyMovies
 
-        Mockito.`when`(movieCatalogueRepository.getMovies()).thenReturn(movie)
-
-        val dataListMovie = viewModel.getMovies().value
-
+        Mockito.`when`(movieCatalogueRepository.getMovies()).thenReturn(movies)
+        val movie = viewModel.getMovies().value?.data
         verify(movieCatalogueRepository).getMovies()
-        assertNotNull(dataListMovie)
-        assertEquals(10, dataListMovie?.size)
+        Assert.assertNotNull(movie)
+        Assert.assertEquals(3, movie?.size)
 
         viewModel.getMovies().observeForever(observer)
-        verify(observer).onChanged(dummyMovie)
+        verify(observer).onChanged(dummyMovies)
     }
 
 }

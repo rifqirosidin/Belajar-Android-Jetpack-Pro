@@ -1,4 +1,4 @@
-package com.dicoding.movieapp
+package com.dicoding.movieapp.utils
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer

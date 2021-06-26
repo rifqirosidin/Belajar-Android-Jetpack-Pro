@@ -5,4 +5,5 @@ import com.dicoding.movieapp.repository.MovieCatalogueRepository
 
 class TvShowViewModel(private val movieCatalogueRepository: MovieCatalogueRepository): ViewModel() {
     fun getTvShows() = movieCatalogueRepository.getTvShows()
+
 }

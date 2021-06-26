@@ -1,11 +1,12 @@
  package com.dicoding.movieapp.ui.home
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.movieapp.R
 import com.dicoding.movieapp.databinding.ActivityHomeBinding
 
  class ActivityHome : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)

@@ -22,6 +22,22 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="gone" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fap_favorite_tv_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:src="@drawable/ic_favorited_white"
+            app:backgroundTint="@color/design_default_color_error"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:maxImageSize="50dp"
+            android:contentDescription="@string/todo"
+            android:focusable="true" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

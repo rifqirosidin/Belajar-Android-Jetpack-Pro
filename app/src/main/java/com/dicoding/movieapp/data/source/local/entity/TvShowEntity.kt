@@ -1,15 +1,18 @@
-package com.dicoding.movieapp.data.source.local
+package com.dicoding.movieapp.data.source.local.entity
 
-import androidx.annotation.NonNull
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
+
 @Entity(tableName = "tv_show_entities")
+@Parcelize
 data class TvShowEntity (
-    @PrimaryKey
-    @NonNull
+
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int,
+    var id: Int? = null,
 
     @ColumnInfo(name = "title")
     var title: String,
@@ -22,7 +25,6 @@ data class TvShowEntity (
 
     @ColumnInfo(name = "posterPath")
     var posterPath: String,
-
-    @ColumnInfo(name = "isFav")
-    var isFav: Boolean = false
-)
+    @ColumnInfo(name = "isFavorite")
+    var isFavorite: Boolean = false
+): Parcelable
